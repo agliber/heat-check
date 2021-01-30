@@ -53,5 +53,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSMicrophoneUsageDescription</key>
+  <string>Use of microphone is required to record your performances</string>
+  <key>NSSpeechRecognitionUsageDescription</key>
+  <string>Speech recognition is required to record your performances</string>
 </dict>
 </plist>
