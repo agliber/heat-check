@@ -39,6 +39,10 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Use of microphone is required to record your performances</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech recognition is required to record your performances</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -48,14 +52,8 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSMicrophoneUsageDescription</key>
-  <string>Use of microphone is required to record your performances</string>
-  <key>NSSpeechRecognitionUsageDescription</key>
-  <string>Speech recognition is required to record your performances</string>
 </dict>
 </plist>
