@@ -1,13 +1,18 @@
 import React from 'react';
 import {FlatList, Text, View, Pressable} from 'react-native';
 import {useTheme} from '@react-navigation/native';
+import useRecords from './useRecords.js';
 
 const AllRecordsScreen = ({navigation}) => {
   const {colors} = useTheme();
+  const records = useRecords([
+    {title: 'Record 0', id: 0, data: []},
+    {title: 'Record 1', id: 1, data: []},
+  ]);
   return (
     <View>
       <FlatList
-        data={[{title: 'Record 0', id: 0}]}
+        data={records}
         keyExtractor={item => item.id.toString()}
         renderItem={({item}) => (
           <Pressable
