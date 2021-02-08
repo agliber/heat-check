@@ -1,4 +1,5 @@
 import React, {useLayoutEffect, useState, useEffect} from 'react';
+import {activateKeepAwake, deactivateKeepAwake} from 'expo-keep-awake';
 import {View, Text, Pressable} from 'react-native';
 import Voice from '@react-native-community/voice';
 import {useTheme} from '@react-navigation/native';
@@ -40,12 +41,14 @@ const RecordScreen = ({navigation, route}) => {
       console.log('onSpeechStart event', event);
       console.log('started recording');
       setIsRecording(true);
+      activateKeepAwake();
     };
 
     Voice.onSpeechEnd = event => {
       console.log('onSpeechEnd event', event);
       console.log('stopped recording');
       setIsRecording(false);
+      deactivateKeepAwake();
     };
 
     return () => {
