@@ -1,17 +1,14 @@
-import React, {useLayoutEffect, useState, useEffect} from 'react';
-import {activateKeepAwake, deactivateKeepAwake} from 'expo-keep-awake';
+import React, {useLayoutEffect, useState} from 'react';
 import {SafeAreaView, FlatList, View, Text, Pressable} from 'react-native';
-import Voice from '@react-native-community/voice';
 import {useTheme} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Collapsible from 'react-native-collapsible';
 import useRecord from './useRecord.js';
+import useVoice from './useVoice.js';
 
 const RecordScreen = ({navigation, route}) => {
   const {colors} = useTheme();
-  const {record, currentSpot, dispatch, matchSpeechToCommand} = useRecord(
-    route.params?.record,
-  );
+  const {record, currentSpot, dispatch} = useRecord(route.params?.record);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -20,72 +17,15 @@ const RecordScreen = ({navigation, route}) => {
     });
   });
 
-  const [isRecording, setIsRecording] = useState(false);
+  const {
+    isRecording,
+    recordedValues,
+    commandsHeard,
+    lastCommandHeard,
+    startOrStop,
+  } = useVoice(dispatch);
 
-  const [recordedValues, setRecordedValues] = useState('');
-  const [commandsHeard, setCommandsHeard] = useState([]);
-  const [lastCommandHeard, setLastCommandHeard] = useState(null);
   const [hideDevLogs, setHideDevLogs] = useState(true);
-
-  useEffect(() => {
-    Voice.isAvailable().then(isAvailable =>
-      console.log('Voice.isAvailable()', isAvailable),
-    );
-
-    Voice.onSpeechStart = event => {
-      console.log('onSpeechStart event', event);
-      console.log('started recording');
-      setIsRecording(true);
-      activateKeepAwake();
-    };
-
-    Voice.onSpeechEnd = event => {
-      console.log('onSpeechEnd event', event);
-      console.log('stopped recording');
-      setIsRecording(false);
-      deactivateKeepAwake();
-    };
-
-    return () => {
-      Voice.destroy()
-        .then(() => {
-          console.log('Voice destroyed');
-          Voice.removeAllListeners();
-        })
-        .catch(e => {
-          console.log('UNABLE TO DESTROY');
-          console.log(e.error);
-        });
-    };
-  }, []);
-
-  useEffect(() => {
-    let timeoutId = null;
-
-    Voice.onSpeechResults = event => {
-      setRecordedValues(event?.value[0]);
-
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        const command = matchSpeechToCommand(event?.value[0]);
-        dispatch(command);
-        setLastCommandHeard(command);
-        setCommandsHeard(commands => [...commands, command]);
-        if (command) Voice.start('en-US');
-        // if (command) {
-        //   Voice.cancel().then(error => {
-        //     console.log('Voice canceled', error);
-        //     if (!error) {
-        //       setIsRecording(false);
-        //       Voice.start('en-US').then(error => {
-        //         console.log('Voice start', error);
-        //       });
-        //     }
-        //   });
-        // }
-      }, 500);
-    };
-  }, [dispatch, matchSpeechToCommand]);
 
   const spotShots = [];
   record.shots.forEach((shot, index) => {
@@ -161,20 +101,7 @@ const RecordScreen = ({navigation, route}) => {
         />
       </View>
       <View>
-        <Pressable
-          style={{alignSelf: 'center'}}
-          onPress={() => {
-            if (isRecording) {
-              console.log('attempting to stop');
-              Voice.stop().then(error => {
-                if (!error) {
-                  setIsRecording(false);
-                }
-              });
-            } else {
-              Voice.start('en-US');
-            }
-          }}>
+        <Pressable style={{alignSelf: 'center'}} onPress={() => startOrStop()}>
           {!isRecording ? (
             <View
               style={{
