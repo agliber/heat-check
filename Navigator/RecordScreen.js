@@ -25,16 +25,17 @@ const reducer = (state, command) => {
 };
 
 const RecordScreen = ({navigation, route}) => {
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: record.title,
-      headerStyle: {shadowOffset: {height: 0, width: 0}},
-    });
-  });
   const {colors} = useTheme();
   const [{record, currentSpot}, dispatch] = useReducer(reducer, {
     record: route.params?.record,
     currentSpot: null,
+  });
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: record.name,
+      headerStyle: {shadowOffset: {height: 0, width: 0}},
+    });
   });
 
   const [isRecording, setIsRecording] = useState(false);
