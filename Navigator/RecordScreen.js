@@ -4,6 +4,7 @@ import {FlatList, View, Text, Pressable} from 'react-native';
 import Voice from '@react-native-community/voice';
 import {useTheme} from '@react-navigation/native';
 import keyWord from './keyWord.json';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const reducer = (state, command) => {
   if (['LC3', 'RC3', 'LW3', 'RW3', 'T3', 'FT'].includes(command)) {
@@ -136,31 +137,64 @@ const RecordScreen = ({navigation, route}) => {
     }
     spotShots[spotShots.length - 1].push(shot);
   });
+  spotShots.reverse();
 
   console.log(spotShots);
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text style={{fontSize: 32}}>
-        {currentSpot}
-        {'\n\n'}
-      </Text>
+    <View
+      style={{
+        flex: 1,
+        marginHorizontal: 8,
+        justifyContent: 'center',
+        alignItems: 'stretch',
+      }}>
       <FlatList
         data={spotShots}
         keyExtractor={item => item[0].timestamp}
-        renderItem={({item}) => (
+        ListHeaderComponent={() =>
+          (spotShots.length === 0 || currentSpot !== spotShots[0][0].spot) && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 8,
+                padding: 8,
+                borderRadius: 8,
+                backgroundColor: colors.card,
+                borderWidth: 1,
+                borderColor: 'black',
+              }}>
+              <Text style={{minWidth: 40}}>{currentSpot ?? ''}</Text>
+              <Icon name={'circle'} size={30} color="transparent" />
+            </View>
+          )
+        }
+        renderItem={({item, index}) => (
           <View
             style={{
               flexDirection: 'row',
-              margin: 8,
-              padding: 16,
+              alignItems: 'center',
+              marginTop: 8,
+              padding: 8,
+              borderRadius: 8,
               backgroundColor: colors.card,
+              borderWidth: 1,
+              borderColor:
+                index === 0 && currentSpot === item[0].spot
+                  ? 'black'
+                  : 'transparent',
             }}>
-            <Text>
-              {item.reduce((accumulator, shot) => {
-                return accumulator + (shot.made ? 'in, ' : 'out, ');
-              }, '')}
-            </Text>
+            <Text style={{minWidth: 40}}>{item[0].spot ?? ''} </Text>
+            <View style={{flexDirection: 'row', flex: 1}}>
+              {item.map(shot => (
+                <Icon
+                  key={shot.timestamp}
+                  name={shot.made ? 'circle' : 'circle-outline'}
+                  size={30}
+                />
+              ))}
+            </View>
           </View>
         )}
       />

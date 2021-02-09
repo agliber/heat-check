@@ -21,7 +21,13 @@
   "LW3": ["left wing three", "left-wing three"],
   "RW3": ["right wing three", "right-wing three"],
   "T3": ["top of the key"],
-  "FT": ["free-throw", "free throw", "free through", "three through"],
+  "FT": [
+    "free-throw",
+    "free throw",
+    "free throws",
+    "free through",
+    "three through"
+  ],
 
   "STOP": ["stop"]
 }
