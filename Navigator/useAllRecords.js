@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'react-native-get-random-values'; // https://www.npmjs.com/package/uuid#react-native--expo
 import {v4 as uuidv4} from 'uuid';
 
-const useRecords = () => {
+const useAllRecords = () => {
   const [records, setRecords] = useState();
 
   const [loading, setLoading] = useState(false);
@@ -39,4 +39,4 @@ const useRecords = () => {
   return {records, loading, createRecord};
 };
 
-export default useRecords;
+export default useAllRecords;

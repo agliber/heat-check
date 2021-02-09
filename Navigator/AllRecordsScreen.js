@@ -1,11 +1,11 @@
 import React from 'react';
 import {FlatList, Text, View, Pressable} from 'react-native';
 import {useTheme} from '@react-navigation/native';
-import useRecords from './useRecords.js';
+import useAllRecords from './useAllRecords.js';
 
 const AllRecordsScreen = ({navigation}) => {
   const {colors} = useTheme();
-  const {records, loading, createRecord} = useRecords();
+  const {records, loading, createRecord} = useAllRecords();
   return (
     <View>
       <FlatList
