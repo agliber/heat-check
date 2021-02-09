@@ -15,10 +15,7 @@ const AllRecordsScreen = ({navigation}) => {
           <Pressable
             style={{margin: 24, padding: 16, backgroundColor: colors.card}}
             onPress={() =>
-              createRecord().then(record => {
-                console.log(record);
-                navigation.navigate('Record', {record});
-              })
+              navigation.navigate('Record', {record: createRecord()})
             }>
             <Text>New</Text>
           </Pressable>
