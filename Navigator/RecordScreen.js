@@ -1,10 +1,11 @@
 import React, {useLayoutEffect, useState, useEffect, useReducer} from 'react';
 import {activateKeepAwake, deactivateKeepAwake} from 'expo-keep-awake';
-import {FlatList, View, Text, Pressable} from 'react-native';
+import {SafeAreaView, FlatList, View, Text, Pressable} from 'react-native';
 import Voice from '@react-native-community/voice';
 import {useTheme} from '@react-navigation/native';
 import keyWord from './keyWord.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Collapsible from 'react-native-collapsible';
 
 const reducer = (state, command) => {
   if (['LC3', 'RC3', 'LW3', 'RW3', 'T3', 'FT'].includes(command)) {
@@ -41,6 +42,7 @@ const RecordScreen = ({navigation, route}) => {
   const [recordedValues, setRecordedValues] = useState('');
   const [commandsHeard, setCommandsHeard] = useState([]);
   const [lastCommandHeard, setLastCommandHeard] = useState(null);
+  const [hideDevLogs, setHideDevLogs] = useState(true);
 
   //https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
   const [commandMap] = useState(() => {
@@ -142,18 +144,38 @@ const RecordScreen = ({navigation, route}) => {
   console.log(spotShots);
 
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         marginHorizontal: 8,
         justifyContent: 'center',
         alignItems: 'stretch',
       }}>
-      <FlatList
-        data={spotShots}
-        keyExtractor={item => item[0].timestamp}
-        ListHeaderComponent={() =>
-          (spotShots.length === 0 || currentSpot !== spotShots[0][0].spot) && (
+      <View style={{flex: 1}}>
+        <FlatList
+          data={spotShots}
+          keyExtractor={item => item[0].timestamp}
+          ListHeaderComponent={() =>
+            isRecording &&
+            (spotShots.length === 0 ||
+              currentSpot !== spotShots[0][0].spot) && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 8,
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor: colors.card,
+                  borderWidth: 1,
+                  borderColor: 'black',
+                }}>
+                <Text style={{minWidth: 40}}>{currentSpot ?? ''}</Text>
+                <Icon name={'circle'} size={30} color="transparent" />
+              </View>
+            )
+          }
+          renderItem={({item, index}) => (
             <View
               style={{
                 flexDirection: 'row',
@@ -163,70 +185,85 @@ const RecordScreen = ({navigation, route}) => {
                 borderRadius: 8,
                 backgroundColor: colors.card,
                 borderWidth: 1,
-                borderColor: 'black',
+                borderColor:
+                  index === 0 && currentSpot === item[0].spot
+                    ? colors.outline
+                    : 'transparent',
               }}>
-              <Text style={{minWidth: 40}}>{currentSpot ?? ''}</Text>
-              <Icon name={'circle'} size={30} color="transparent" />
+              <Text style={{minWidth: 40}}>{item[0].spot ?? ''} </Text>
+              <View style={{flexDirection: 'row', flex: 1}}>
+                {item.map(shot => (
+                  <Icon
+                    key={shot.timestamp}
+                    name={shot.made ? 'circle' : 'circle-outline'}
+                    size={30}
+                  />
+                ))}
+              </View>
             </View>
-          )
-        }
-        renderItem={({item, index}) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: 8,
-              padding: 8,
-              borderRadius: 8,
-              backgroundColor: colors.card,
-              borderWidth: 1,
-              borderColor:
-                index === 0 && currentSpot === item[0].spot
-                  ? 'black'
-                  : 'transparent',
-            }}>
-            <Text style={{minWidth: 40}}>{item[0].spot ?? ''} </Text>
-            <View style={{flexDirection: 'row', flex: 1}}>
-              {item.map(shot => (
-                <Icon
-                  key={shot.timestamp}
-                  name={shot.made ? 'circle' : 'circle-outline'}
-                  size={30}
-                />
-              ))}
+          )}
+        />
+      </View>
+      <View>
+        <Pressable
+          style={{alignSelf: 'center'}}
+          onPress={() => {
+            if (isRecording) {
+              console.log('attempting to stop');
+              Voice.stop().then(error => {
+                if (!error) {
+                  setIsRecording(false);
+                }
+              });
+            } else {
+              Voice.start('en-US');
+            }
+          }}>
+          {!isRecording ? (
+            <View
+              style={{
+                backgroundColor: 'green',
+                width: 80,
+                aspectRatio: 1,
+                borderRadius: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{color: colors.background, fontSize: 20}}>
+                Record
+              </Text>
             </View>
-          </View>
-        )}
-      />
-      <Text style={{fontSize: 32}}>
-        {lastCommandHeard}
-        {'\n\n'}
-      </Text>
-
-      <Text>
-        Interpreted input: {'\n\n'} {recordedValues}
-      </Text>
-      <Text>
-        Commands heard: {'\n\n'}
-        {commandsHeard.join(' ')}
-      </Text>
-      <Pressable
-        style={{margin: 24, padding: 16, backgroundColor: colors.card}}
-        onPress={() => {
-          if (isRecording) {
-            console.log('attempting to stop');
-            Voice.stop().then(error => {
-              if (!error) {
-                setIsRecording(false);
-              }
-            });
-          } else {
-            Voice.start('en-US');
-          }
-        }}>
-        <Text>{isRecording ? 'Stop Recording' : 'Start Recording'}</Text>
-      </Pressable>
-    </View>
+          ) : (
+            <View
+              style={{
+                backgroundColor: 'red',
+                width: 80,
+                aspectRatio: 1,
+                borderRadius: 16,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{color: colors.background, fontSize: 20}}>Stop</Text>
+            </View>
+          )}
+        </Pressable>
+        <Pressable
+          onLongPress={() => setHideDevLogs(prev => !prev)}
+          style={{backgroundColor: colors.card, width: 32}}
+          hitSlop={100}
+        />
+        <Collapsible collapsed={hideDevLogs}>
+          <Text style={{fontSize: 20}}>Last Command: {lastCommandHeard}</Text>
+          <Text>
+            Interpreted input: {'\n'} {recordedValues}
+          </Text>
+          <Text>
+            Commands heard: {'\n'}
+            {commandsHeard.join(' ')}
+          </Text>
+        </Collapsible>
+      </View>
+    </SafeAreaView>
   );
 };
 
