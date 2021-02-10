@@ -23,7 +23,7 @@ const RecordScreen = ({navigation, route}) => {
     commandsHeard,
     lastCommandHeard,
     startOrStop,
-  } = useVoice(dispatch);
+  } = useVoice(command => dispatch({type: 'command', payload: command}));
 
   const [hideDevLogs, setHideDevLogs] = useState(true);
 
