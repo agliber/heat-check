@@ -14,6 +14,7 @@ import Collapsible from 'react-native-collapsible';
 import useRecord from './useRecord.js';
 import useVoice from './useVoice.js';
 import {Circle} from 'react-native-progress';
+import {format, parseISO, formatDistanceStrict} from 'date-fns';
 
 const RecordScreen = ({navigation, route}) => {
   const {colors} = useTheme();
@@ -99,8 +100,7 @@ const RecordScreen = ({navigation, route}) => {
                     marginTop: 8,
                     padding: 8,
                     borderRadius: 8,
-                    backgroundColor: colors.card,
-                    borderWidth: 1,
+                    borderWidth: 0.5,
                     borderColor: 'black',
                   }}>
                   <Text style={{minWidth: 40}}>{currentSpot ?? ''}</Text>
@@ -122,7 +122,7 @@ const RecordScreen = ({navigation, route}) => {
                   marginTop: 8,
                   padding: 8,
                   borderRadius: 8,
-                  borderWidth: 1,
+                  borderWidth: 0.5,
                   borderColor:
                     index === 0 && currentSpot === item[0].spot
                       ? colors.outline
@@ -147,9 +147,27 @@ const RecordScreen = ({navigation, route}) => {
                       key={shot.timestamp}
                       name={shot.made ? 'circle' : 'circle-thin'}
                       size={30}
-                      color={shot.made ? 'grey' : 'grey'}
+                      color={'grey'}
                     />
                   ))}
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={{color: 'grey', margin: 4}}>
+                    {format(parseISO(item[0].timestamp), 'MMM d yyyy')}
+                  </Text>
+                  <Text style={{color: 'grey', margin: 4}}>
+                    {format(parseISO(item[0].timestamp), 'h:mmaa')}
+                  </Text>
+                  <Text style={{color: 'grey', margin: 4}}>
+                    {formatDistanceStrict(
+                      parseISO(item[0].timestamp),
+                      parseISO(item[item.length - 1].timestamp),
+                    )}
+                  </Text>
                 </View>
               </View>
             )}
