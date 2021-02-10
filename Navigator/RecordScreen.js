@@ -13,6 +13,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import Collapsible from 'react-native-collapsible';
 import useRecord from './useRecord.js';
 import useVoice from './useVoice.js';
+import {Circle} from 'react-native-progress';
 
 const RecordScreen = ({navigation, route}) => {
   const {colors} = useTheme();
@@ -31,7 +32,11 @@ const RecordScreen = ({navigation, route}) => {
   const [hideDevLogs, setHideDevLogs] = useState(true);
 
   const spotShots = [];
+  let shotsMade = 0;
   record.shots.forEach((shot, index) => {
+    if (shot.made) {
+      shotsMade++;
+    }
     if (shot.spot !== record.shots[index - 1]?.spot) {
       spotShots[spotShots.length] = [shot];
       return;
@@ -63,6 +68,19 @@ const RecordScreen = ({navigation, route}) => {
             }
           }}
           returnKeyType="done"
+        />
+        <Circle
+          style={{alignSelf: 'center'}}
+          progress={shotsMade / record.shots.length}
+          showsText
+          textStyle={{color: colors.text, fontSize: 20, fontWeight: '400'}}
+          formatText={() => `${shotsMade}/${record.shots.length}`}
+          direction="counter-clockwise"
+          size={64}
+          thickness={4}
+          borderWidth={0}
+          color="#7cfc00"
+          unfilledColor="#ff69b4"
         />
         <View style={{flex: 1}}>
           <FlatList

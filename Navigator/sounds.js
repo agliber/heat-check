@@ -1,6 +1,7 @@
 import Sound from 'react-native-sound';
 Sound.setCategory('Playback');
 
+// https://www.cubui.com/blog/react/pull-to-refresh-and-button-press-sound-effect-in-react-native/
 const swish = new Sound(require('../audio/swish.mp3'), error =>
   console.log(error),
 );
