@@ -70,8 +70,10 @@ const RecordScreen = ({navigation, route}) => {
           returnKeyType="done"
         />
         <Circle
-          style={{alignSelf: 'center'}}
-          progress={shotsMade / record.shots.length}
+          style={{alignSelf: 'center', margin: 8}}
+          progress={
+            record.shots.length === 0 ? 0 : shotsMade / record.shots.length
+          }
           showsText
           textStyle={{color: colors.text, fontSize: 20, fontWeight: '400'}}
           formatText={() => `${shotsMade}/${record.shots.length}`}
@@ -80,7 +82,7 @@ const RecordScreen = ({navigation, route}) => {
           thickness={4}
           borderWidth={0}
           color="#7cfc00"
-          unfilledColor="#ff69b4"
+          unfilledColor={record.shots.length === 0 ? colors.border : '#ff69b4'}
         />
         <View style={{flex: 1}}>
           <FlatList
