@@ -8,7 +8,7 @@ import {
   Pressable,
 } from 'react-native';
 import {useTheme} from '@react-navigation/native';
-import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import Collapsible from 'react-native-collapsible';
 import useRecord from './useRecord.js';
@@ -81,8 +81,8 @@ const RecordScreen = ({navigation, route}) => {
           size={64}
           thickness={4}
           borderWidth={0}
-          color="#7cfc00"
-          unfilledColor={record.shots.length === 0 ? colors.border : '#ff69b4'}
+          color="green"
+          unfilledColor={record.shots.length === 0 ? colors.border : 'red'}
         />
         <View style={{flex: 1}}>
           <FlatList
@@ -104,32 +104,50 @@ const RecordScreen = ({navigation, route}) => {
                     borderColor: 'black',
                   }}>
                   <Text style={{minWidth: 40}}>{currentSpot ?? ''}</Text>
-                  <McIcon name={'circle'} size={30} color="transparent" />
                 </View>
               )
             }
+            ItemSeparatorComponent={() => (
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: colors.border,
+                  marginLeft: 16,
+                }}
+              />
+            )}
             renderItem={({item, index}) => (
               <View
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
                   marginTop: 8,
                   padding: 8,
                   borderRadius: 8,
-                  backgroundColor: colors.card,
                   borderWidth: 1,
                   borderColor:
                     index === 0 && currentSpot === item[0].spot
                       ? colors.outline
                       : 'transparent',
                 }}>
-                <Text style={{minWidth: 40}}>{item[0].spot ?? ''} </Text>
-                <View style={{flexDirection: 'row', flex: 1}}>
+                <View
+                  style={{
+                    margin: 4,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={{fontSize: 16}}>{item[0].spot ?? ''} </Text>
+                  <Text style={{fontSize: 16}}>
+                    {`${item.filter(shot => shot.made).length}/${item.length}`}
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row', flex: 1, flexWrap: 'wrap'}}>
                   {item.map(shot => (
-                    <McIcon
+                    <FontAwesomeIcon
+                      style={{marginRight: 2}}
                       key={shot.timestamp}
-                      name={shot.made ? 'circle' : 'circle-outline'}
+                      name={shot.made ? 'circle' : 'circle-thin'}
                       size={30}
+                      color={shot.made ? 'grey' : 'grey'}
                     />
                   ))}
                 </View>
