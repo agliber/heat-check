@@ -9,27 +9,27 @@ const useAllRecords = () => {
 
   const [loading, setLoading] = useState(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      setLoading(true);
-      // AsyncStorage.clear();
-      AsyncStorage.getAllKeys()
-        .then(keys => {
-          console.log('keys', keys);
-          return AsyncStorage.multiGet(keys);
-        })
-        .then(entries => {
-          console.log('entries', entries);
-          setRecords(entries.map(([key, value]) => JSON.parse(value)));
-        })
-        .catch(error => console.log(error))
-        .finally(() => setLoading(false));
-    }, []),
-  );
+  const refreshRecords = useCallback(() => {
+    setLoading(true);
+
+    AsyncStorage.getAllKeys()
+      .then(keys => {
+        console.log('keys', keys);
+        return AsyncStorage.multiGet(keys);
+      })
+      .then(entries => {
+        console.log('entries', entries);
+        setRecords(entries.map(([key, value]) => JSON.parse(value)));
+      })
+      .catch(error => console.log(error))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useFocusEffect(refreshRecords);
 
   const createRecord = () => {
     const record = {
-      name: 'Untitled',
+      name: '',
       id: uuidv4(),
       createdAt: new Date().toISOString(),
       shots: [],
@@ -40,7 +40,11 @@ const useAllRecords = () => {
     //  .catch(error => console.log(error));
   };
 
-  return {records, loading, createRecord};
+  const deleteRecord = id => {
+    return AsyncStorage.removeItem(id).then(() => refreshRecords());
+  };
+
+  return {records, loading, createRecord, deleteRecord};
 };
 
 export default useAllRecords;

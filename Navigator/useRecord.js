@@ -18,20 +18,29 @@ const useRecord = initialRecord => {
   return {record, currentSpot, dispatch};
 };
 
-const reducer = (state, command) => {
-  if (['LC3', 'RC3', 'LW3', 'RW3', 'T3', 'FT'].includes(command)) {
-    return {...state, currentSpot: command};
-  } else if (['IN', 'OUT'].includes(command)) {
-    const shot = {
-      spot: state.currentSpot,
-      timestamp: new Date().toISOString(),
-      made: command === 'IN' ? true : false,
-    };
+const reducer = (state, action) => {
+  if (action.type === 'command') {
+    const command = action.payload;
+    if (['LC3', 'RC3', 'LW3', 'RW3', 'T3', 'FT'].includes(command)) {
+      return {...state, currentSpot: command};
+    } else if (['IN', 'OUT'].includes(command)) {
+      const shot = {
+        spot: state.currentSpot,
+        timestamp: new Date().toISOString(),
+        made: command === 'IN' ? true : false,
+      };
+      return {
+        ...state,
+        record: {...state.record, shots: [...state.record.shots, shot]},
+      };
+    }
+  } else if (action.type === 'rename') {
     return {
       ...state,
-      record: {...state.record, shots: [...state.record.shots, shot]},
+      record: {...state.record, name: action.payload},
     };
   }
+
   return state;
 };
 

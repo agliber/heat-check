@@ -1,7 +1,15 @@
 import React, {useLayoutEffect, useState} from 'react';
-import {SafeAreaView, FlatList, View, Text, Pressable} from 'react-native';
+import {
+  SafeAreaView,
+  FlatList,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+} from 'react-native';
 import {useTheme} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import Collapsible from 'react-native-collapsible';
 import useRecord from './useRecord.js';
 import useVoice from './useVoice.js';
@@ -10,12 +18,7 @@ const RecordScreen = ({navigation, route}) => {
   const {colors} = useTheme();
   const {record, currentSpot, dispatch} = useRecord(route.params?.record);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: record.name,
-      headerStyle: {shadowOffset: {height: 0, width: 0}},
-    });
-  });
+  useLayoutEffect(() => navigation.setOptions({headerShown: false}));
 
   const {
     isRecording,
@@ -37,24 +40,55 @@ const RecordScreen = ({navigation, route}) => {
   });
   spotShots.reverse();
 
-  console.log(spotShots);
-
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        marginHorizontal: 8,
-        justifyContent: 'center',
-        alignItems: 'stretch',
-      }}>
-      <View style={{flex: 1}}>
-        <FlatList
-          data={spotShots}
-          keyExtractor={item => item[0].timestamp}
-          ListHeaderComponent={() =>
-            isRecording &&
-            (spotShots.length === 0 ||
-              currentSpot !== spotShots[0][0].spot) && (
+    <SafeAreaView style={{flex: 1}}>
+      <Pressable style={{marginLeft: 8}} onPress={() => navigation.goBack()}>
+        <FeatherIcon name="chevron-left" color={colors.primary} size={32} />
+      </Pressable>
+      <View style={{flex: 1, alignItems: 'stretch', marginHorizontal: 16}}>
+        <TextInput
+          autoFocus={record.name === ''}
+          autoCorrect={false}
+          style={{marginLeft: 8, marginTop: 8, fontSize: 32}}
+          placeholder="Record Title"
+          containerStyle={{paddingHorizontal: 32}}
+          value={record.name}
+          onChangeText={text => {
+            console.log('rename');
+            dispatch({type: 'rename', payload: text});
+          }}
+          onBlur={() => {
+            if (record.name === '') {
+              dispatch({type: 'rename', payload: 'Untitled'});
+            }
+          }}
+          returnKeyType="done"
+        />
+        <View style={{flex: 1}}>
+          <FlatList
+            data={spotShots}
+            keyExtractor={item => item[0].timestamp}
+            ListHeaderComponent={() =>
+              isRecording &&
+              (spotShots.length === 0 ||
+                currentSpot !== spotShots[0][0].spot) && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 8,
+                    padding: 8,
+                    borderRadius: 8,
+                    backgroundColor: colors.card,
+                    borderWidth: 1,
+                    borderColor: 'black',
+                  }}>
+                  <Text style={{minWidth: 40}}>{currentSpot ?? ''}</Text>
+                  <McIcon name={'circle'} size={30} color="transparent" />
+                </View>
+              )
+            }
+            renderItem={({item, index}) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -64,43 +98,25 @@ const RecordScreen = ({navigation, route}) => {
                   borderRadius: 8,
                   backgroundColor: colors.card,
                   borderWidth: 1,
-                  borderColor: 'black',
+                  borderColor:
+                    index === 0 && currentSpot === item[0].spot
+                      ? colors.outline
+                      : 'transparent',
                 }}>
-                <Text style={{minWidth: 40}}>{currentSpot ?? ''}</Text>
-                <Icon name={'circle'} size={30} color="transparent" />
+                <Text style={{minWidth: 40}}>{item[0].spot ?? ''} </Text>
+                <View style={{flexDirection: 'row', flex: 1}}>
+                  {item.map(shot => (
+                    <McIcon
+                      key={shot.timestamp}
+                      name={shot.made ? 'circle' : 'circle-outline'}
+                      size={30}
+                    />
+                  ))}
+                </View>
               </View>
-            )
-          }
-          renderItem={({item, index}) => (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 8,
-                padding: 8,
-                borderRadius: 8,
-                backgroundColor: colors.card,
-                borderWidth: 1,
-                borderColor:
-                  index === 0 && currentSpot === item[0].spot
-                    ? colors.outline
-                    : 'transparent',
-              }}>
-              <Text style={{minWidth: 40}}>{item[0].spot ?? ''} </Text>
-              <View style={{flexDirection: 'row', flex: 1}}>
-                {item.map(shot => (
-                  <Icon
-                    key={shot.timestamp}
-                    name={shot.made ? 'circle' : 'circle-outline'}
-                    size={30}
-                  />
-                ))}
-              </View>
-            </View>
-          )}
-        />
-      </View>
-      <View>
+            )}
+          />
+        </View>
         <Pressable style={{alignSelf: 'center'}} onPress={() => startOrStop()}>
           {!isRecording ? (
             <View
@@ -130,21 +146,23 @@ const RecordScreen = ({navigation, route}) => {
             </View>
           )}
         </Pressable>
-        <Pressable
-          onLongPress={() => setHideDevLogs(prev => !prev)}
-          style={{backgroundColor: colors.card, width: 32}}
-          hitSlop={100}
-        />
-        <Collapsible collapsed={hideDevLogs}>
-          <Text style={{fontSize: 20}}>Last Command: {lastCommandHeard}</Text>
-          <Text>
-            Interpreted input: {'\n'} {recordedValues}
-          </Text>
-          <Text>
-            Commands heard: {'\n'}
-            {commandsHeard.join(' ')}
-          </Text>
-        </Collapsible>
+        <View>
+          <Pressable
+            onLongPress={() => setHideDevLogs(prev => !prev)}
+            style={{backgroundColor: colors.card, width: 32}}
+            hitSlop={100}
+          />
+          <Collapsible collapsed={hideDevLogs}>
+            <Text style={{fontSize: 20}}>Last Command: {lastCommandHeard}</Text>
+            <Text>
+              Interpreted input: {'\n'} {recordedValues}
+            </Text>
+            <Text>
+              Commands heard: {'\n'}
+              {commandsHeard.join(' ')}
+            </Text>
+          </Collapsible>
+        </View>
       </View>
     </SafeAreaView>
   );
