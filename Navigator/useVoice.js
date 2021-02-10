@@ -93,7 +93,7 @@ const useVoice = executeCommand => {
   const startOrStop = () => {
     if (isRecording) {
       console.log('attempting to stop');
-      Voice.stop().then(error => {
+      Voice.cancel().then(error => {
         if (!error) {
           setIsRecording(false);
         }
