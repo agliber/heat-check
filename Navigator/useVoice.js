@@ -51,8 +51,8 @@ const useVoice = executeCommand => {
 
   useEffect(() => {
     const commandMap = new Map();
-    Object.entries(keyWord).forEach(([command, aliases]) => {
-      aliases.forEach(alias => commandMap.set(alias, command));
+    keyWord.forEach(({id, aliases}) => {
+      aliases.forEach(alias => commandMap.set(alias, id));
     });
 
     const matchSpeechToCommand = speech => {
