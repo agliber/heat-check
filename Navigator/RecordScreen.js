@@ -35,14 +35,8 @@ const RecordScreen = ({navigation, route}) => {
     startOrStop,
   } = useVoice(command => dispatch({type: 'command', payload: command}));
 
-  const [hideDevLogs, setHideDevLogs] = useState(true);
-
   const spotShots = [];
-  let shotsMade = 0;
   record.shots.forEach((shot, index) => {
-    if (shot.made) {
-      shotsMade++;
-    }
     const prevShot = record.shots[index - 1];
     if (
       shot.spot !== prevShot?.spot ||
@@ -63,40 +57,8 @@ const RecordScreen = ({navigation, route}) => {
       <Pressable style={{marginLeft: 8}} onPress={() => navigation.goBack()}>
         <FeatherIcon name="chevron-left" color={colors.primary} size={32} />
       </Pressable>
+      <Header record={record} dispatch={dispatch} />
       <View style={{flex: 1, alignItems: 'stretch', marginHorizontal: 16}}>
-        <TextInput
-          autoFocus={record.name === ''}
-          autoCorrect={false}
-          style={{marginLeft: 8, marginTop: 8, fontSize: 32}}
-          placeholder="Record Title"
-          containerStyle={{paddingHorizontal: 32}}
-          value={record.name}
-          onChangeText={text => {
-            console.log('rename');
-            dispatch({type: 'rename', payload: text});
-          }}
-          onBlur={() => {
-            if (record.name === '') {
-              dispatch({type: 'rename', payload: 'Untitled'});
-            }
-          }}
-          returnKeyType="done"
-        />
-        <Circle
-          style={{alignSelf: 'center', margin: 8}}
-          progress={
-            record.shots.length === 0 ? 0 : shotsMade / record.shots.length
-          }
-          showsText
-          textStyle={{color: colors.text, fontWeight: '400'}}
-          formatText={() => `${shotsMade}/\n${record.shots.length}`}
-          direction="counter-clockwise"
-          size={80}
-          thickness={4}
-          borderWidth={0}
-          color="green"
-          unfilledColor={record.shots.length === 0 ? colors.border : 'red'}
-        />
         <View style={{flex: 1}}>
           <FlatList
             data={spotShots}
@@ -214,25 +176,81 @@ const RecordScreen = ({navigation, route}) => {
             </View>
           )}
         </Pressable>
-        <View>
-          <Pressable
-            onLongPress={() => setHideDevLogs(prev => !prev)}
-            style={{backgroundColor: colors.card, width: 32}}
-            hitSlop={100}
-          />
-          <Collapsible collapsed={hideDevLogs}>
-            <Text style={{fontSize: 20}}>Last Command: {lastCommandHeard}</Text>
-            <Text>
-              Interpreted input: {'\n'} {recordedValues}
-            </Text>
-            <Text>
-              Commands heard: {'\n'}
-              {commandsHeard.join(' ')}
-            </Text>
-          </Collapsible>
-        </View>
+        <DevLogs
+          lastCommandHeard={lastCommandHeard}
+          recordedValues={recordedValues}
+          commandsHeard={commandsHeard}
+        />
       </View>
     </SafeAreaView>
+  );
+};
+
+const Header = ({record, dispatch}) => {
+  const {colors} = useTheme();
+  const shotsMade = record.shots.filter(shot => shot.made).length;
+
+  return (
+    <View>
+      <TextInput
+        autoFocus={record.name === ''}
+        autoCorrect={false}
+        style={{marginLeft: 8, marginTop: 8, fontSize: 32}}
+        placeholder="Record Title"
+        containerStyle={{paddingHorizontal: 32}}
+        value={record.name}
+        onChangeText={text => {
+          console.log('rename');
+          dispatch({type: 'rename', payload: text});
+        }}
+        onBlur={() => {
+          if (record.name === '') {
+            dispatch({type: 'rename', payload: 'Untitled'});
+          }
+        }}
+        returnKeyType="done"
+      />
+      <Circle
+        style={{alignSelf: 'center', margin: 8}}
+        progress={
+          record.shots.length === 0 ? 0 : shotsMade / record.shots.length
+        }
+        showsText
+        textStyle={{color: colors.text, fontWeight: '400'}}
+        formatText={() => `${shotsMade}/\n${record.shots.length}`}
+        direction="counter-clockwise"
+        size={80}
+        thickness={4}
+        borderWidth={0}
+        color="green"
+        unfilledColor={record.shots.length === 0 ? colors.border : 'red'}
+      />
+    </View>
+  );
+};
+
+const DevLogs = ({lastCommandHeard, recordedValues, commandsHeard}) => {
+  const {colors} = useTheme();
+  const [hideDevLogs, setHideDevLogs] = useState(true);
+
+  return (
+    <View>
+      <Pressable
+        onLongPress={() => setHideDevLogs(prev => !prev)}
+        style={{backgroundColor: colors.card, width: 32}}
+        hitSlop={100}
+      />
+      <Collapsible collapsed={hideDevLogs}>
+        <Text style={{fontSize: 20}}>Last Command: {lastCommandHeard}</Text>
+        <Text>
+          Interpreted input: {'\n'} {recordedValues}
+        </Text>
+        <Text>
+          Commands heard: {'\n'}
+          {commandsHeard.join(' ')}
+        </Text>
+      </Collapsible>
+    </View>
   );
 };
 
