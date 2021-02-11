@@ -1,4 +1,4 @@
-import keyWord from './keyWord.json';
+import commands from './commands.json';
 import {useState, useEffect} from 'react';
 import {activateKeepAwake, deactivateKeepAwake} from 'expo-keep-awake';
 import Voice from '@react-native-community/voice';
@@ -51,7 +51,7 @@ const useVoice = executeCommand => {
 
   useEffect(() => {
     const commandMap = new Map();
-    keyWord.forEach(({id, aliases}) => {
+    commands.forEach(({id, aliases}) => {
       aliases.forEach(alias => commandMap.set(alias, id));
     });
 
