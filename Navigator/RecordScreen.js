@@ -1,9 +1,8 @@
-import React, {useLayoutEffect, useState} from 'react';
-import {SafeAreaView, FlatList, View, Pressable} from 'react-native';
+import React, {useLayoutEffect, useState, useRef} from 'react';
+import {FlatList, View, Pressable} from 'react-native';
 import {Text, TextInput} from '@heat-check/components';
 import {useTheme} from '@react-navigation/native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import FeatherIcon from 'react-native-vector-icons/Feather';
 import Collapsible from 'react-native-collapsible';
 import useRecord from './useRecord.js';
 import useVoice from './useVoice.js';
@@ -18,8 +17,18 @@ import {
 const RecordScreen = ({navigation, route}) => {
   const {colors} = useTheme();
   const {record, currentSpot, dispatch} = useRecord(route.params?.record);
+  const flatListRef = useRef();
 
-  useLayoutEffect(() => navigation.setOptions({headerShown: false}));
+  useLayoutEffect(() =>
+    navigation.setOptions({
+      headerTitle: '',
+      headerBackTitleVisible: false,
+      headerStyle: {
+        backgroundColor: colors.background,
+        shadowOffset: {height: 0, width: 0},
+      },
+    }),
+  );
 
   const {
     isRecording,
@@ -27,7 +36,10 @@ const RecordScreen = ({navigation, route}) => {
     commandsHeard,
     lastCommandHeard,
     startOrStop,
-  } = useVoice(command => dispatch({type: 'command', payload: command}));
+  } = useVoice(command => {
+    flatListRef.current.scrollToOffset({x: 0});
+    dispatch({type: 'command', payload: command});
+  });
 
   const spotShots = [];
   record.shots.forEach((shot, index) => {
@@ -47,15 +59,14 @@ const RecordScreen = ({navigation, route}) => {
   spotShots.reverse();
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <Pressable style={{marginLeft: 8}} onPress={() => navigation.goBack()}>
-        <FeatherIcon name="chevron-left" color={colors.primary} size={32} />
-      </Pressable>
-
+    <View style={{flex: 1}}>
       <View style={{flex: 1, alignItems: 'stretch', marginHorizontal: 16}}>
         <Header record={record} dispatch={dispatch} />
+
         <View style={{flex: 1}}>
           <FlatList
+            ref={flatListRef}
+            style={{overflow: 'visible'}}
             data={spotShots}
             keyExtractor={item => item[0].timestamp}
             ListHeaderComponent={() =>
@@ -142,42 +153,55 @@ const RecordScreen = ({navigation, route}) => {
             )}
           />
         </View>
-        <Pressable style={{alignSelf: 'center'}} onPress={() => startOrStop()}>
-          {!isRecording ? (
-            <View
-              style={{
-                backgroundColor: colors.success,
-                width: 80,
-                aspectRatio: 1,
-                borderRadius: 40,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{color: colors.background, fontSize: 20}}>
-                Record
-              </Text>
-            </View>
-          ) : (
-            <View
-              style={{
-                backgroundColor: colors.danger,
-                width: 80,
-                aspectRatio: 1,
-                borderRadius: 16,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{color: colors.background, fontSize: 20}}>Stop</Text>
-            </View>
-          )}
-        </Pressable>
-        <DevLogs
-          lastCommandHeard={lastCommandHeard}
-          recordedValues={recordedValues}
-          commandsHeard={commandsHeard}
-        />
+        <View
+          style={{
+            backgroundColor: colors.card,
+            borderRadius: 16,
+            padding: 8,
+            paddingBottom: 24,
+          }}
+          zIndex={1}>
+          <Pressable
+            style={{alignSelf: 'center'}}
+            onPress={() => startOrStop()}>
+            {!isRecording ? (
+              <View
+                style={{
+                  backgroundColor: colors.success,
+                  width: 80,
+                  aspectRatio: 1,
+                  borderRadius: 40,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text style={{color: colors.background, fontSize: 20}}>
+                  Record
+                </Text>
+              </View>
+            ) : (
+              <View
+                style={{
+                  backgroundColor: colors.danger,
+                  width: 80,
+                  aspectRatio: 1,
+                  borderRadius: 16,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text style={{color: colors.background, fontSize: 20}}>
+                  Stop
+                </Text>
+              </View>
+            )}
+          </Pressable>
+          <DevLogs
+            lastCommandHeard={lastCommandHeard}
+            recordedValues={recordedValues}
+            commandsHeard={commandsHeard}
+          />
+        </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -186,7 +210,7 @@ const Header = ({record, dispatch}) => {
   const shotsMade = record.shots.filter(shot => shot.made).length;
 
   return (
-    <View>
+    <View style={{backgroundColor: 'rgba(0,0,0,0.8)'}} zIndex={1}>
       <TextInput
         autoFocus={record.name === ''}
         autoCorrect={false}
@@ -221,6 +245,7 @@ const Header = ({record, dispatch}) => {
         unfilledColor={
           record.shots.length === 0 ? colors.border : colors.danger
         }
+        zIndex={4}
       />
     </View>
   );
