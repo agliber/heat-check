@@ -1,12 +1,6 @@
 import React, {useLayoutEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  FlatList,
-  View,
-  Text,
-  TextInput,
-  Pressable,
-} from 'react-native';
+import {SafeAreaView, FlatList, View, Pressable} from 'react-native';
+import {Text, TextInput} from '@heat-check/components';
 import {useTheme} from '@react-navigation/native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -57,8 +51,9 @@ const RecordScreen = ({navigation, route}) => {
       <Pressable style={{marginLeft: 8}} onPress={() => navigation.goBack()}>
         <FeatherIcon name="chevron-left" color={colors.primary} size={32} />
       </Pressable>
-      <Header record={record} dispatch={dispatch} />
+
       <View style={{flex: 1, alignItems: 'stretch', marginHorizontal: 16}}>
+        <Header record={record} dispatch={dispatch} />
         <View style={{flex: 1}}>
           <FlatList
             data={spotShots}
@@ -74,8 +69,8 @@ const RecordScreen = ({navigation, route}) => {
                     marginTop: 8,
                     padding: 8,
                     borderRadius: 8,
-                    borderWidth: 0.5,
-                    borderColor: 'black',
+                    borderWidth: 1,
+                    borderColor: colors.text,
                   }}>
                   <Text style={{minWidth: 40}}>{currentSpot ?? ''}</Text>
                 </View>
@@ -96,10 +91,10 @@ const RecordScreen = ({navigation, route}) => {
                   marginTop: 8,
                   padding: 8,
                   borderRadius: 8,
-                  borderWidth: 0.5,
+                  borderWidth: 1,
                   borderColor:
                     index === 0 && currentSpot === item[0].spot
-                      ? colors.outline
+                      ? colors.text
                       : 'transparent',
                 }}>
                 <View
@@ -121,7 +116,7 @@ const RecordScreen = ({navigation, route}) => {
                       key={shot.timestamp}
                       name={shot.made ? 'circle' : 'circle-thin'}
                       size={30}
-                      color={'grey'}
+                      color={colors.muted}
                     />
                   ))}
                 </View>
@@ -130,13 +125,13 @@ const RecordScreen = ({navigation, route}) => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}>
-                  <Text style={{color: 'grey', margin: 4}}>
+                  <Text style={{color: colors.muted, margin: 4}}>
                     {format(parseISO(item[0].timestamp), 'MMM d yyyy')}
                   </Text>
-                  <Text style={{color: 'grey', margin: 4}}>
+                  <Text style={{color: colors.muted, margin: 4}}>
                     {format(parseISO(item[0].timestamp), 'h:mmaa')}
                   </Text>
-                  <Text style={{color: 'grey', margin: 4}}>
+                  <Text style={{color: colors.muted, margin: 4}}>
                     {formatDistanceStrict(
                       parseISO(item[0].timestamp),
                       parseISO(item[item.length - 1].timestamp),
@@ -151,7 +146,7 @@ const RecordScreen = ({navigation, route}) => {
           {!isRecording ? (
             <View
               style={{
-                backgroundColor: 'green',
+                backgroundColor: colors.success,
                 width: 80,
                 aspectRatio: 1,
                 borderRadius: 40,
@@ -165,7 +160,7 @@ const RecordScreen = ({navigation, route}) => {
           ) : (
             <View
               style={{
-                backgroundColor: 'red',
+                backgroundColor: colors.danger,
                 width: 80,
                 aspectRatio: 1,
                 borderRadius: 16,
@@ -222,8 +217,10 @@ const Header = ({record, dispatch}) => {
         size={80}
         thickness={4}
         borderWidth={0}
-        color="green"
-        unfilledColor={record.shots.length === 0 ? colors.border : 'red'}
+        color={colors.success}
+        unfilledColor={
+          record.shots.length === 0 ? colors.border : colors.danger
+        }
       />
     </View>
   );
