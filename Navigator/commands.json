@@ -12,12 +12,13 @@
       "made",
       "hit",
       "it",
-      "hits"
+      "hits",
+      "good"
     ]
   },
   {
     "id": "OUT",
-    "aliases": ["out", "miss", "mess", "ness", "mrs.", "missed"]
+    "aliases": ["out", "miss", "mess", "ness", "mrs.", "missed", "yes", "less"]
   },
   {
     "id": "UNDO",

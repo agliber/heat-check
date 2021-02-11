@@ -76,10 +76,10 @@ const RecordScreen = ({navigation, route}) => {
             record.shots.length === 0 ? 0 : shotsMade / record.shots.length
           }
           showsText
-          textStyle={{color: colors.text, fontSize: 20, fontWeight: '400'}}
-          formatText={() => `${shotsMade}/${record.shots.length}`}
+          textStyle={{color: colors.text, fontWeight: '400'}}
+          formatText={() => `${shotsMade}/\n${record.shots.length}`}
           direction="counter-clockwise"
-          size={64}
+          size={80}
           thickness={4}
           borderWidth={0}
           color="green"

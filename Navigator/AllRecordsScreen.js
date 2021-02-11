@@ -60,6 +60,7 @@ const AllRecordsScreen = ({navigation}) => {
 const RecordListItem = ({record, setScrollEnabled, deleteRecord}) => {
   const {colors} = useTheme();
   const navigation = useNavigation();
+  const [active, setActive] = useState(false);
 
   return (
     <Swipeable
@@ -71,7 +72,11 @@ const RecordListItem = ({record, setScrollEnabled, deleteRecord}) => {
             justifyContent: 'center',
             paddingLeft: 16,
           }}>
-          <Icon name="trash" size={32} color={colors.background} />
+          <Icon
+            name="trash"
+            size={active ? 32 : 24}
+            color={colors.background}
+          />
         </View>
       }
       rightActionActivationDistance={96}
@@ -94,7 +99,9 @@ const RecordListItem = ({record, setScrollEnabled, deleteRecord}) => {
       }
       onRightActionActivate={() => {
         ReactNativeHapticFeedback.trigger('impactHeavy');
-      }}>
+        setActive(true);
+      }}
+      onRightActionDeactivate={() => setActive(false)}>
       <Pressable
         style={{padding: 16}}
         onPress={() => {
