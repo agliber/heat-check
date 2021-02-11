@@ -14,11 +14,11 @@ const useAllRecords = () => {
 
     AsyncStorage.getAllKeys()
       .then(keys => {
-        console.log('keys', keys);
+        // console.log('keys', keys);
         return AsyncStorage.multiGet(keys);
       })
       .then(entries => {
-        console.log('entries', entries);
+        // console.log('entries', entries);
         setRecords(entries.map(([key, value]) => JSON.parse(value)));
       })
       .catch(error => console.log(error))

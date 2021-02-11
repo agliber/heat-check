@@ -23,9 +23,17 @@ const useVoice = executeCommand => {
 
     Voice.onSpeechEnd = event => {
       console.log('onSpeechEnd event', event);
-      console.log('stopped recording');
-      setIsRecording(false);
-      deactivateKeepAwake();
+
+      // restart voice recording when unintentionaly stopped
+      // by end of recognizing event (auto-stop timeout)
+      Voice.start('en-US').then(error => {
+        if (error) {
+          console.log(error);
+          console.log('stopped recording');
+          setIsRecording(false);
+          deactivateKeepAwake();
+        }
+      });
     };
 
     return () => {
@@ -63,18 +71,23 @@ const useVoice = executeCommand => {
       // console.log('command heard: ', command);
       return command;
     };
+
     let timeoutId = null;
+    let speechResults = '';
 
-    Voice.onSpeechResults = event => {
+    Voice.onSpeechPartialResults = event => {
+      console.log('onSpeechPartialResults', event);
+      // don't do anything if triggered by end of recognizing event (auto-stop timeout)
+      if (speechResults === event?.value[0]) return;
+      speechResults = event?.value[0];
+
       setRecordedValues(event?.value[0]);
-
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         const command = matchSpeechToCommand(event?.value[0]);
         executeCommand(command);
         setLastCommandHeard(command);
         setCommandsHeard(commands => [...commands, command]);
-        if (command) Voice.start('en-US');
         // if (command) {
         //   Voice.cancel().then(error => {
         //     console.log('Voice canceled', error);
@@ -93,13 +106,21 @@ const useVoice = executeCommand => {
   const startOrStop = () => {
     if (isRecording) {
       console.log('attempting to stop');
+      // using Voice.cancel because it doesn't trigger onSpeechEnd listener,
+      // like Voice.stop() would
       Voice.cancel().then(error => {
-        if (!error) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('stopped recording');
           setIsRecording(false);
+          deactivateKeepAwake();
         }
       });
     } else {
-      Voice.start('en-US');
+      Voice.start('en-US').then(error => {
+        if (error) console.log(error);
+      });
     }
   };
 
