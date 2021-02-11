@@ -1,5 +1,6 @@
 import React, {useLayoutEffect, useState} from 'react';
-import {FlatList, Text, View, Pressable, Alert} from 'react-native';
+import {FlatList, View, Pressable, Alert} from 'react-native';
+import {Text} from '@heat-check/components';
 import {useTheme, useNavigation} from '@react-navigation/native';
 import useAllRecords from './useAllRecords.js';
 import Icon from 'react-native-vector-icons/Feather';
@@ -68,7 +69,7 @@ const RecordListItem = ({record, setScrollEnabled, deleteRecord}) => {
         <View
           style={{
             flex: 1,
-            backgroundColor: 'red',
+            backgroundColor: colors.danger,
             justifyContent: 'center',
             paddingLeft: 16,
           }}>
