@@ -14,7 +14,12 @@ import Collapsible from 'react-native-collapsible';
 import useRecord from './useRecord.js';
 import useVoice from './useVoice.js';
 import {Circle} from 'react-native-progress';
-import {format, parseISO, formatDistanceStrict} from 'date-fns';
+import {
+  format,
+  parseISO,
+  formatDistanceStrict,
+  differenceInSeconds,
+} from 'date-fns';
 
 const RecordScreen = ({navigation, route}) => {
   const {colors} = useTheme();
@@ -38,7 +43,14 @@ const RecordScreen = ({navigation, route}) => {
     if (shot.made) {
       shotsMade++;
     }
-    if (shot.spot !== record.shots[index - 1]?.spot) {
+    const prevShot = record.shots[index - 1];
+    if (
+      shot.spot !== prevShot?.spot ||
+      differenceInSeconds(
+        parseISO(shot.timestamp),
+        parseISO(prevShot?.timestamp),
+      ) > 60
+    ) {
       spotShots[spotShots.length] = [shot];
       return;
     }
