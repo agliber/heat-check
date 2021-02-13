@@ -11,18 +11,30 @@
       "micke",
       "made",
       "hit",
-      "it",
       "hits",
       "good"
     ]
   },
   {
     "id": "OUT",
-    "aliases": ["out", "miss", "mess", "ness", "mrs.", "missed", "yes", "less"]
+    "aliases": ["out", "miss", "mess", "ness", "mrs.", "missed", "less"]
   },
   {
     "id": "UNDO",
-    "aliases": ["undo", "a new", "on do", "and do", "undue", "under"]
+    "aliases": [
+      "undo",
+      "a new",
+      "on do",
+      "and do",
+      "undue",
+      "under",
+      "urdu",
+      "london"
+    ]
+  },
+  {
+    "id": "REDO",
+    "aliases": ["redo", "review", "read it"]
   },
   {
     "id": "LC3",

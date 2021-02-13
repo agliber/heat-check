@@ -37,7 +37,7 @@ const RecordScreen = ({navigation, route}) => {
     lastCommandHeard,
     startOrStop,
   } = useVoice(command => {
-    flatListRef.current.scrollToOffset({x: 0});
+    flatListRef.current?.scrollToOffset({x: 0});
     dispatch({type: 'command', payload: command});
   });
 

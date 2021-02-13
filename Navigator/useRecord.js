@@ -1,11 +1,19 @@
 import {useReducer, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {playSwish, playClunk, playShoeSqueak} from './sounds.js';
+import {
+  playSwish,
+  playClunk,
+  playShoeSqueak,
+  playRewind,
+  playForward,
+  playNope,
+} from './sounds.js';
 
 const useRecord = initialRecord => {
   const [{record, currentSpot}, dispatch] = useReducer(reducer, {
     record: initialRecord,
     currentSpot: null,
+    undoneShots: [],
   });
 
   useEffect(() => {
@@ -39,7 +47,30 @@ const reducer = (state, action) => {
       return {
         ...state,
         record: {...state.record, shots: [...state.record.shots, shot]},
+        undoneShots: [],
       };
+    } else if (command === 'UNDO') {
+      const undoShot = state.record.shots.pop();
+      if (undoShot) {
+        playRewind();
+        return {
+          ...state,
+          undoneShots: [...state.undoneShots, undoShot],
+          record: {...state.record, shots: state.record.shots},
+        };
+      }
+      playNope();
+    } else if (command === 'REDO') {
+      const redoShot = state.undoneShots.pop();
+      if (redoShot) {
+        playForward();
+        return {
+          ...state,
+          undoneShots: state.undoneShots,
+          record: {...state.record, shots: [...state.record.shots, redoShot]},
+        };
+      }
+      playNope();
     }
   } else if (action.type === 'rename') {
     return {

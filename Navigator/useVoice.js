@@ -75,8 +75,8 @@ const useVoice = executeCommand => {
     let timeoutId = null;
     let speechResults = '';
 
-    Voice.onSpeechPartialResults = event => {
-      console.log('onSpeechPartialResults', event);
+    Voice.onSpeechResults = event => {
+      console.log('onSpeechResults', event);
       // don't do anything if triggered by end of recognizing event (auto-stop timeout)
       if (speechResults === event?.value[0]) return;
       speechResults = event?.value[0];
