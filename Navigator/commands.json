@@ -17,7 +17,7 @@
   },
   {
     "id": "OUT",
-    "aliases": ["out", "miss", "mess", "ness", "mrs.", "missed", "less"]
+    "aliases": ["out", "ouch", "miss", "mess", "ness", "mrs.", "missed", "less"]
   },
   {
     "id": "UNDO",
@@ -38,11 +38,11 @@
   },
   {
     "id": "LC3",
-    "aliases": ["left corner three"]
+    "aliases": ["left corner three", "left quarter three"]
   },
   {
     "id": "RC3",
-    "aliases": ["right corner three"]
+    "aliases": ["right corner three", "right quarter three"]
   },
   {
     "id": "LW3",
@@ -63,8 +63,13 @@
       "free throw",
       "free throws",
       "free through",
-      "three through"
+      "three through",
+      "freezer"
     ]
+  },
+  {
+    "id": "CHECK",
+    "aliases": ["check", "czech"]
   },
   {
     "id": "STOP",

@@ -30,6 +30,7 @@
     "react-native-screens": "^2.17.1",
     "react-native-sound": "^0.11.0",
     "react-native-swipeable": "^0.6.0",
+    "react-native-tts": "^3.2.0",
     "react-native-unimodules": "^0.12.0",
     "react-native-vector-icons": "^8.0.0",
     "uuid": "^8.3.2"

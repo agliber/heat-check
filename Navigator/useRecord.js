@@ -8,6 +8,7 @@ import {
   playForward,
   playNope,
 } from './sounds.js';
+import Tts from 'react-native-tts';
 
 const useRecord = initialRecord => {
   const [{record, currentSpot}, dispatch] = useReducer(reducer, {
@@ -71,6 +72,10 @@ const reducer = (state, action) => {
         };
       }
       playNope();
+    } else if (command === 'CHECK') {
+      const shotsMade = state.record.shots.filter(shot => shot.made).length;
+      const shotsTaken = state.record.shots.length;
+      Tts.speak(`You're ${shotsMade} of ${shotsTaken}`, {rate: 0.5});
     }
   } else if (action.type === 'rename') {
     return {
