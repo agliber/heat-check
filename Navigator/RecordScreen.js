@@ -1,6 +1,7 @@
 import React, {useLayoutEffect, useState, useRef} from 'react';
 import {FlatList, View, Pressable} from 'react-native';
 import {Text, TextInput} from '@heat-check/components';
+import Instructions from './Instructions.js';
 import {useTheme} from '@react-navigation/native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Collapsible from 'react-native-collapsible';
@@ -69,6 +70,7 @@ const RecordScreen = ({navigation, route}) => {
             style={{overflow: 'visible'}}
             data={spotShots}
             keyExtractor={item => item[0].timestamp}
+            ListEmptyComponent={() => <Instructions />}
             ListHeaderComponent={() =>
               isRecording &&
               (spotShots.length === 0 ||
