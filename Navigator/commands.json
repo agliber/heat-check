@@ -69,7 +69,12 @@
   },
   {
     "id": "CHECK",
-    "aliases": ["check", "czech"]
+    "aliases": ["check", "czech", "chick"]
+  },
+  {
+    "id": "SPOT",
+    "aliases": ["spot"]
+  },
   },
   {
     "id": "STOP",

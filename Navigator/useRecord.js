@@ -76,6 +76,8 @@ const reducer = (state, action) => {
       const shotsMade = state.record.shots.filter(shot => shot.made).length;
       const shotsTaken = state.record.shots.length;
       Tts.speak(`You're ${shotsMade} of ${shotsTaken}`, {rate: 0.5});
+    } else if (command === 'SPOT') {
+      Tts.speak(`${state.currentSpot}`, {rate: 0.5});
     }
   } else if (action.type === 'rename') {
     return {
