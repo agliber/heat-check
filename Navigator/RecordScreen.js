@@ -4,6 +4,7 @@ import {Text, TextInput} from '@heat-check/components';
 import Instructions from './Instructions.js';
 import {useTheme} from '@react-navigation/native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 import Collapsible from 'react-native-collapsible';
 import useRecord from './useRecord.js';
 import useVoice from './useVoice.js';
@@ -28,6 +29,17 @@ const RecordScreen = ({navigation, route}) => {
         backgroundColor: colors.background,
         shadowOffset: {height: 0, width: 0},
       },
+      headerRight: () => (
+        <Pressable
+          style={{padding: 8}}
+          onPress={() => navigation.navigate('Instruction')}>
+          <Ionicon
+            name="ios-information-circle-outline"
+            size={30}
+            color={colors.primary}
+          />
+        </Pressable>
+      ),
     }),
   );
 
@@ -63,7 +75,6 @@ const RecordScreen = ({navigation, route}) => {
     <View style={{flex: 1}}>
       <View style={{flex: 1, alignItems: 'stretch', marginHorizontal: 16}}>
         <Header record={record} dispatch={dispatch} />
-
         <View style={{flex: 1}}>
           <FlatList
             ref={flatListRef}
